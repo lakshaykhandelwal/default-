@@ -1,0 +1,55 @@
+<apex:page docType="html-5.0" lightningStylesheets="true" standardController="Opportunity" extensions="SE_OppLayout_SectionController">
+    <style>
+        .scrollit {
+        overflow:scroll;
+        height:10px;
+        }
+    </style>
+    <apex:slds />
+    <div class="slds-text-heading_medium"><center><b>{!oppData.SalesEngineer__r.Name}'s Activity</b></center></div>
+    <br />
+    <!--<div class="scrollit" style="height:100%;">-->
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Subject">Subject</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Assigned to">Assigned to</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Priority">Priority</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Status">Status</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Type">Type</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!EventData}" var="event">
+                <tr class="slds-hint-parent">
+                    <td data-label="Subject" scope="row">
+                        <div class="slds-truncate" title="{event.Subject}">{!event.Subject}</div>
+                    </td>
+                    <td data-label="Assigned to">
+                        <div class="slds-truncate" title="{!event.Owner.Name}">{!event.Owner.Name}</div>
+                    </td>
+                    <td data-label="type">
+                        <div class="slds-truncate" title="{!event.Priority__c}">{!event.Priority__c}</div>
+                    </td>
+                    <td data-label="type">
+                        <div class="slds-truncate" title="{!event.Status__c}">{!event.Status__c}</div>
+                    </td>
+                    <td data-label="type">
+                        <div class="slds-truncate" title="{!event.Type__c}">{!event.Type__c}</div>
+                    </td>
+                </tr>
+            </apex:repeat>
+        </tbody>
+    </table>
+    <!--</div>-->
+</apex:page>

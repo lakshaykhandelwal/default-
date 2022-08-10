@@ -1,0 +1,265 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" 
+                access="global" 
+                controller="GoogleCal">
+    <!-- ADDED BY SG-->
+    <aura:handler name="init" value="{!this}" action="{!c.getGoogleDataJS}"/>
+    <!-- Filter Event-->
+    <aura:handler event="c:MightySE_FilterDateEvents" action="{!c.filterDates}"/>
+    <aura:attribute name="industryMap" type="Map"/>
+    <aura:attribute name="taskTypeMap" type="Map"/>
+    <aura:attribute name="getAllgoogleList" type="Google_Calendar_Event__c[]" description="store google event  records list"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean" description="show hide save and cancel" default="false"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    
+    <!--END-->
+    
+    <!--Declare Attributes-->
+    <aura:attribute name="baseUrl" type="String" default=""></aura:attribute>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedLookUpRecord1" type="sObject" default="{}"/>
+    <aura:attribute name="isEdit" type="boolean"/>
+    <aura:attribute name="filteredData" type="List" />
+    
+    <!-- filter input -->
+    <aura:attribute name="filter" type="String" />
+    <aura:attribute name="editId" type="id"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="recordId" type="String"/>    
+    
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="Oppdata" type="List"></aura:attribute>
+    <aura:attribute name="Demodata" type="List"></aura:attribute>
+    <!-- This attribute will hold the update records from data table-->
+    <aura:attribute name="updatedRecord" type="Object[]" />
+    <aura:attribute name="columnNumber" type="Integer" />
+    <aura:attribute name="sortdirectionsub" type="boolean" />
+    <aura:attribute name="sortdirectiondate" type="boolean" />
+    <aura:attribute name="sortdirectionactivity" type="boolean" />
+    <aura:attribute name="sortdirectiondemo" type="boolean" />
+    <aura:attribute name="sortAsc" type="boolean" />
+    <aura:attribute name="sortDec" type="boolean" />
+    <aura:attribute name="subjectSortDir" type="Boolean" default="false" />
+    <aura:attribute name="arrowDirection" type="string" default="arrowup" description="Use for change arrow sign direction on header based on click"/>
+    <aura:attribute name="isAsc" type="boolean" default="true" description="boolean flag for pass sorting condition to apex class"/> 
+    <aura:attribute name="selectedTabsoft" type="string" default="Mighty_S_E__Subject__c" description="Use for show/hide arraow sign on header based on conditions"/>
+    <!-- You must define keyField as 'Id' to save the record back in Salesforce
+ 'onsave' attribute will executed when user clicks on save button -->
+    <lightning:card >
+        <div class="slds-clearfix  slds-p-horizontal_medium">
+            <div class="slds-float_left">
+                <div class="slds-text-heading_medium">Google Calendar</div>
+            </div>
+            <div class="slds-float_right">
+                <!-- Brand variant: Identifies the primary action in a group of buttons -->
+                <lightning:button variant="brand" label="Login in to Google Calendar" title="Login into Google Calendar" onclick="{! c.googleLogin }" />
+                <!--   <lightning:button variant="brand" label="Sync and Save google events" title="Sync Save Google events" onclick="{! c.syncandSaveClick }" />-->
+                <!--  <lightning:button variant="brand" label="Refresh sync" title="Refresh sync" onclick="{! c.refreshsyncClick }" />-->
+            </div>
+        </div>
+        <!--<lightning:input type="text" onchange="{!c.filter}" value="{!v.filter}" label="Filter" />-->
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="slds-m-around_large" style="z-index:79;position:relative">
+                    <lightning:buttonGroup class="slds-m-around_medium slds-align_absolute-center">
+                        <lightning:button variant="brand" label="Save" onclick="{!c.SaveAccount}" />
+                    </lightning:buttonGroup>
+                    <table class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols" id= "googleCalTable">
+                        <thead style="z-index:1" >
+                            
+                            <tr class="slds-text-title--caps">
+                                <th scope="col" style="width:5%">
+                                    <div class="slds-truncate" title="index">#</div>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSubject}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Subject">Subject</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Subject__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Subject__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                <!--<th scope="col"  >
+                                    <div class="slds-truncate" title="Link">Link</div>
+                                </th>-->
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortStartdate}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Start Date">Start Date</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Start_Date_Time__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Start_Date_Time__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                
+                                <!-- <th scope="col" style="width:20%" >
+                                    <div class="slds-truncate" title="Subject" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Subject__c" data-sort-Direction="{!v.subjectSortDir}" style="size:10%">Subject
+                                       
+                                        <aura:if isTrue="{!v.sortdirectionsub}">
+                                      <aura:if isTrue="{!v.subjectSortDir}">
+
+                                    <button   class="slds-button" type="button" onclick="{!c.updateColumnSorting}"  data-sort-Direction="desc" style="size:10%" id="btnasc" disabled="{!v.Likedisable}"> </button>
+                                        <lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small" />
+                                   
+                                            </aura:if>
+                                             <aura:if isTrue="{!!v.subjectSortDir}">
+                                              
+                                        <button  class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Subject__c" data-sort-Direction="asc"  id="btndec"></button>
+                                        <lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small" />
+                                    
+                                      </aura:if> 
+                                        </aura:if>
+                                        
+                                   </div>
+                                </th>-->
+                                
+                                
+                                <!-- <th scope="col" style="width:15%" >
+                                    <div class="slds-truncate" title="Start Date" onclick="{!c.displayarrows}">Start Date
+                                        <aura:if isTrue="{!v.sortdirectiondate}">
+                                     <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Event_Start_Date__c" data-sort-Direction="desc"  >
+                                         <lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small" />
+                                    </button>
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Event_Start_Date__c" data-sort-Direction="asc"  >
+                                        <lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small" />
+                                    </button>
+                                        </aura:if>
+                                        </div>
+                                </th>-->
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortOpportunity}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Opportunity">Opportunity</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Opportunity_Name__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Opportunity_Name__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortType}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Activity Type">Type</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Task_Type__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Task_Type__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortActivity}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Activity Type">Activity Type</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Activity__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Activity__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDemo}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span class="slds-truncate" title="Demo">Demo</span>  
+                                        <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Demo__c') }">&nbsp;  &#9660; </aura:if>  
+                                        <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Mighty_S_E__Demo__c') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a>
+                                </th>
+                                <!--<th scope="col" style="width:15%">
+                                    <div class="slds-truncate" title="Opportunity" onclick="{!c.displayarrows}">Opportunity
+                                        <aura:if isTrue="{!v.sortdirectionopp}">
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Opportunity__c" data-sort-Direction="desc"  >
+                                        <lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small" />
+                                    </button>
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Opportunity__c" data-sort-Direction="asc"  >
+                                        <lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small"  />
+                                    </button>
+                                        </aura:if>
+                                        </div>
+                                </th>
+                                <th scope="col" style="width:15%">
+                                    <div class="slds-truncate" title="Activity Type" onclick="{!c.displayarrows}">Activity Type
+                                        <aura:if isTrue="{!v.sortdirectionactivity}">
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Activity__c" data-sort-Direction="desc"  >
+                                        <lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small" />
+                                    </button>
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Activity__c" data-sort-Direction="asc"  >
+                                        <lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small"/>
+                                    </button>
+                                        </aura:if>
+                                        </div>
+                                </th>
+                                <th scope="col" style="width:15%">
+                                    <div class="slds-truncate" title="Demo" onclick="{!c.displayarrows}">Demo
+                                        <aura:if isTrue="{!v.sortdirectiondemo}" >
+                                     <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Demo__c" data-sort-Direction="desc"  >
+                                         <lightning:icon iconName="utility:arrowdown" alternativeText="arrowdown" title="arrowdown" size="xx-small" />  
+                                    </button>
+                                    <button class="slds-button" type="button" onclick="{!c.updateColumnSorting}" data-field-Name="Mighty_S_E__Demo__c" data-sort-Direction="asc"  >
+                                        <lightning:icon iconName="utility:arrowup" alternativeText="arrowup" title="arrowup" size="xx-small"/>
+                                    </button>
+                                        </aura:if>
+                                    </div>
+                                </th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <aura:iteration items="{!v.getAllgoogleList}" var="accdata" indexVar="index">
+                                <!-- Child Component -->
+                                
+                                <c:ChildInlineEdit singleAccount="{!accdata}"
+                                                   showSaveCancelBtn="{!v.showSaveCancelBtn}"
+                                                   index="{!index + 1}"
+                                                   industryMap = "{!v.industryMap}"
+                                                   taskTypeMap = "{!v.taskTypeMap}"
+                                                   />
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    <lightning:buttonGroup class="slds-m-around_medium slds-align_absolute-center">
+                        <lightning:button variant="brand" label="Save" onclick="{!c.SaveAccount}" />
+                    </lightning:buttonGroup>
+                    
+                </div>
+            </lightning:layoutItem>
+            <div style="z-index:20;position:relative">
+                <lightning:layoutItem padding="around-small" flexibility="auto">
+                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                      onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                      onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="1" 
+                           class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                    </span>
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    
+                    <aura:iteration items="{!v.pageList}" var="item">
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="{!item}"
+                               class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                        </span>
+                    </aura:iteration>
+                    
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                           class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                    </span>
+                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}" />
+                </lightning:layoutItem>
+            </div>
+        </lightning:layout>
+    </lightning:card>
+    
+</aura:component>

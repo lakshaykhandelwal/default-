@@ -1,0 +1,141 @@
+<aura:component controller="GoogleCal">
+    <!-- To Get picklist values-->  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="taskTypeMap" type="Map"/>
+    <aura:attribute name="industryMap" type="Map"/>
+    <aura:attribute name="objInfoForPicklistValues" type="Google_Calendar_Event__c" default="{sobjectType : 'Google_Calendar_Event__c'}" description="object info to get picklist"/>
+    <aura:attribute name="ratingPicklistOpts" type="string[]" description="picklist options"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedLookUpRecord1" type="sObject" default="{}"/>
+    <aura:attribute name="selectedLookUpRecord2" type="sObject" default="{}"/>
+    <aura:attribute name="showErrorClass" type="boolean" default="false"/>
+    <aura:attribute name="index" type="string" />
+    <aura:attribute name="singleAccount" type="sobject" default="{'sobjectType' : 'Google_Calendar_Event__c',
+                                                                 'Mighty_S_E__Subject__c' : '',
+                                                                 'Mighty_S_E__Gc_Link__c': '',
+                                                                 'Mighty_S_E__Start_Date_Time__c': '',
+                                                                 'Mighty_S_E__Opportunity_Name__c' : '',
+                                                                 'Mighty_S_E__Activity__c' : '',
+                                                                 'Mighty_S_E__Demo__c' : '',
+                                                                 'Mighty_S_E__Opportunity__c' : '',
+                                                                 'Mighty_S_E__Demo_Id__c':'',
+                                                                 'Mighty_S_E__Task_Type__c':''
+                                                                 }"/>
+    <aura:attribute name="nameEditMode" type="boolean" default="false" />
+    <aura:attribute name="nameEditMode2" type="boolean" default="false" />
+    <aura:attribute name="nameEditMode3" type="boolean" default="false" />
+    <aura:attribute name="editTaskType" type="boolean" default="false" />
+    <aura:attribute name="ratingEditMode" type="boolean" default="false" />
+    <aura:handler name="cmpEvent" event="c:ceEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="cmpEvent2" event="c:ceEvent2" action="{!c.handleComponentEvent2}"/>
+    <tr class="tr">
+        
+        <td><div class="slds-truncate">{!v.index}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.Mighty_S_E__Subject__c}</div></td>
+        <!--<td><div class="slds-truncate"><a href="{!v.singleAccount.Mighty_S_E__Gc_Link__c}" target="_blank">Go to Event</a></div></td>
+        -->
+		<td><div class="slds-truncate">
+            <ui:outputDateTime value="{!v.singleAccount.Mighty_S_E__Start_Date_Time__c}" format="MM/dd/yyyy, hh:mm"/>
+            <!--<lightning:formattedDateTime value="{!v.singleAccount.Mighty_S_E__Start_Date_Time__c}" year="numeric" month="numeric" day="numeric"  hour="2-digit" minute="2-digit" format="MM/dd/yyyy" />-->
+            </div></td>
+        
+        
+        <td ondblclick="{!c.EditName}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.nameEditMode == false}">
+                    <span class="slds-truncate"    title="Name">{!v.singleAccount.Mighty_S_E__Opportunity__r.Name}</span>
+                    <button onclick="{!c.EditName}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        
+                        <c:customLookup1 objectAPIName="Opportunity"  IconName="standard:Opportunity" selectedRecord="{!v.selectedLookUpRecord}" />
+                        <ui:inputText class="slds-input slds-hide"
+                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                      aura:id="sdatas"
+                                      value="{!v.singleAccount.Mighty_S_E__Opportunity__c}" /> 
+                        <button onclick="{!c.closeName}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>  
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+        
+        <td ondblclick="{!c.editTaskType}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.editTaskType == false}">
+                    <span class="slds-truncate" title="Name">{!v.singleAccount.Mighty_S_E__Task_Type__c}</span>
+                    <button onclick="{!c.editTaskType}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        <lightning:select aura:id="taskType" onchange="{!c.selectedTask}" value="{!v.singleAccount.Mighty_S_E__Task_Type__c}">
+                            <option value="">choose one...</option>
+                            <aura:iteration items="{!v.taskTypeMap}" var="ind" indexVar="key">
+                                <option text="{!ind.value}" value="{!ind.value}" selected="{!ind.value==v.singleAccount.Mighty_S_E__Task_Type__c}" />
+                            </aura:iteration>
+                            
+                        </lightning:select>
+                        
+                        <button onclick="{!c.closeTaskType}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>   
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+        
+        <td ondblclick="{!c.EditName3}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.nameEditMode3 == false}">
+                    <span class="slds-truncate" title="Name">{!v.singleAccount.Mighty_S_E__Activity__c}</span>
+                    <button onclick="{!c.EditName3}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        <lightning:select aura:id="activitytype" onchange="{!c.slectedVal}" value="{!v.singleAccount.Mighty_S_E__Activity__c}">
+                            <option value="">choose one...</option>
+                            <aura:iteration items="{!v.industryMap}" var="ind" indexVar="key">
+                                <option text="{!ind.value}" value="{!ind.value}" selected="{!ind.value==v.singleAccount.Mighty_S_E__Activity__c}" />
+                            </aura:iteration>
+                            
+                        </lightning:select>
+                        
+                        <button onclick="{!c.closeName3}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>   
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+        
+        <td ondblclick="{!c.EditName2}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.nameEditMode2 == false}">
+                    <span class="slds-truncate" title="Name">{!v.singleAccount.Mighty_S_E__Demo_Id__r.Name}</span>
+                    <button onclick="{!c.EditName2}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        
+                        <c:customLookup2  objectAPIName="Mighty_S_E__Demos__c" IconName="standard:Mighty_S_E__Demos__c " selectedRecord="{!v.selectedLookUpRecord1}" />
+                        <ui:inputText class="slds-input slds-hide"
+                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                      aura:id="accRating"
+                                      
+                                      value="{!v.singleAccount.Mighty_S_E__Demo_Id__c}" />
+                        <button onclick="{!c.closeName2}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>   
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+    </tr>
+</aura:component>

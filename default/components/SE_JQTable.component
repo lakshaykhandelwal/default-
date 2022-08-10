@@ -1,0 +1,378 @@
+<apex:component controller="SE_JQTableController"   allowDML="true" >
+    <apex:attribute name="ChartManagerObj" type="SE_Chart_Manager__c" required="true" description="Query for Chart" assignTo="{!query}" />
+    <apex:attribute name="sequence" type="integer" required="true" description="Sequence of Chart" />
+    <apex:attribute name="title" type="String" required="true" description="Title for Chart" />
+	<script src="https://www.jqwidgets.com/jquery-widgets-demo/jqwidgets/jqxgrid.filter.js"/>
+            <style>
+                div#gridmenu5{
+                width:205px !important;
+                }
+            	.alert-box {
+                    padding: 15px;
+                    top: 0;
+                    left: 45%;
+                    border: 1px solid transparent;
+                    border-radius: 4px;
+                    position: fixed;
+                    z-index:999;
+                }
+    			
+                .success {
+                    color: #3c763d;
+                    background-color: #dff0d8;
+                    border-color: #d6e9c6;
+                    display: none;
+                }
+				.jqx-grid-column-header.jqx-widget-header
+                {
+                   background-color: black !important;
+                   color:white!important;
+                }
+                .failure {
+                    color: #a94442;
+                    background-color: #f2dede;
+                    border-color: #ebccd1;
+                    display: none;
+                }
+                
+                .warning {
+                    color: #8a6d3b;
+                    background-color: #fcf8e3;
+                    border-color: #faebcc;
+                    display: none;
+                }
+    			.scustom{
+                    height:30px;
+                    background-color: white;
+                    color:black;
+       			 }
+                .savebtn{
+                    bottom: 35px;
+                    z-index: 999;
+                    margin: 0 auto;
+                }
+                .jqx-grid-pager-number {
+                  line-height: 27px !important;
+                }
+    			.jqx-widget .jqx-grid-cell, .jqx-widget .jqx-grid-column-header, .jqx-widget .jqx-grid-group-cell
+                {
+                    border:none !important;
+                }
+    			ul li, ol li {
+    				margin-left: 0.5em;
+                    }
+                .btn.newbtn  {
+                	background:#ff8956;
+                	color: #454545;
+                }
+                .btn.newbtn:hover {
+                	border: 1px solid #cccccc;
+                	background: #ededed;
+	                font-weight: normal;
+                }	        
+            </style>
+            <script>
+             
+
+            var dataToUpdate = [];
+   
+            $(document).ready(function (){
+                    
+                /* var opptwo=[];
+                    var opponetwo=[];
+                    try{
+                        
+                        var opptwo={!allOpportunity};  
+                    }
+                    catch(err) {
+                        //  document.getElementById("jqxgrid").innerHTML = err.message;
+                    }
+                    opptwo.forEach(function(oppob){
+                        opponetwo.push(oppob.Name);	 
+                    });
+                */
+                    var linkrenderer = function (row, column, value) {
+                        if(!(value.includes('https://'))){
+                        value = "https://"+value;
+                        }
+                        if (value.indexOf('#') != -1) {
+                                value = value.substring(0, value.indexOf('#'));
+                            }
+                        // var format = { target: '"_blank"' };
+                        // var html = $.jqx.dataFormat.formatlink(value, format);
+                        // return html;
+                        
+                        return '<button onclick=getpageRedirect("'+value+'");> Go To </button>';
+                       
+                        }
+
+                $('#setlink6').hide();     
+                $('#setlink7').hide();  
+                
+                $('#setlink9').hide();     
+                $('#setlink10').hide();  
+                                  var tableJsondata =  sforce.connection.query("{!strQuery}");
+                                  var records = tableJsondata.getArray("records"); 
+                				  var tableDataJson = [];
+                				  var setFields = {!strFields};
+                				  console.log('setFields--',setFields);
+                				  records.forEach(function(obj){
+                                      var dynObj = {};
+                                     setFields.forEach(function(field){
+                                       
+                                         if(field.indexOf('.') != -1)
+                                             {
+                                                 var key0 = field.split('.')[0];
+                                                 var key1 = field.split('.')[1];
+                                                 val = obj[key0].get(key1);
+                                             }
+                                         else
+                                             {
+                                                 val = obj[field];
+                                             }
+                                         dynObj[field] = val;
+                                     });
+                                     tableDataJson.push(dynObj); 
+                                  });
+                				  console.log('tableDataJson--',tableDataJson);
+                                  var tableFields = {!tablelabels};
+                                  var source ={   
+                                          localdata: tableDataJson,
+                                          datatype: "array",
+                                          datafields:tableFields                                         
+                          			};
+                      var dataAdapter = new $.jqx.dataAdapter(source);
+                      var tabledata = {!tableColums};
+                
+                if('{!FLOOR(sequence)}' == 1)
+                {
+                    $("#{!FLOOR(sequence)}").jqxGrid(
+                        {
+                            width: "99%",
+                            source: dataAdapter,
+                            columnsresize: true,
+                            autoHeight: true,
+                            filterable: {!rowaddflag},
+                            editable: {!rowaddflag},
+                            columns: tabledata,
+                            pageable: true,
+                            sortable: {!rowaddflag},
+                            showfilterrow: true,
+                            pagermode: 'simple'/*,
+                              showeverpresentrow: {!rowaddflag},
+                              everpresentrowposition: "top"*/
+                        });
+                }else{
+                    $("#{!FLOOR(sequence)}").jqxGrid(
+                        {
+                            width: "99%",
+                            source: dataAdapter,
+                            columnsresize: true,
+                            autoHeight: true,
+                            filterable: {!rowaddflag},
+                            editable: {!rowaddflag},
+                            columns: tabledata,
+                            pageable: true,
+                            sortable: {!rowaddflag},
+                            
+                            pagermode: 'simple'/*,
+                              showeverpresentrow: {!rowaddflag},
+                              everpresentrowposition: "top"*/
+                          });
+                    
+                } 
+                      $("#{!FLOOR(sequence)}").on('cellbeginedit', function (event) {
+                          console.log('dataToUpdate--begin--',dataToUpdate);
+                      });
+                      $("#{!FLOOR(sequence)}").on('cellendedit', function (event) { 
+                          var i = -1; // Index
+                          var flag = 0; // Flag to check if Record is new or old
+                          var j = 0; // looping Variable
+                          var args = event.args;
+                          var ObjToUpdate = new sforce.SObject("{!JSENCODE(objChartManager.Object_Name__c)}"); // Object Container
+                          ObjToUpdate.Id = args.row.Id;  
+                          console.log('args.rowindex',args.rowindex);
+                          if(event.args.oldvalue != event.args.value) {
+                              for(j=0;j<dataToUpdate.length;j++)
+                              {
+                                  i++;
+                                  if (dataToUpdate[j].Id == ObjToUpdate.Id)
+                                  {
+                                      ObjToUpdate = dataToUpdate[j];
+                                      flag = 1;
+                                      break;
+                                  }
+                              }
+                              if(flag==0)
+                              {
+                                  dataToUpdate.push(ObjToUpdate);
+                                  i++;
+                                  console.log('--Args--',args);
+                                  console.log('dataToUpdate---',dataToUpdate);
+                              } 
+                              ObjToUpdate[args.datafield] =  args.value;
+                              dataToUpdate[i]=ObjToUpdate;
+                              console.log('dataToUpdate--edited-->',dataToUpdate);
+                              
+                              
+                          }
+                          
+                          
+                      });
+       
+     			
+                
+                if({!FLOOR(sequence)} == 5 || {!FLOOR(sequence)} == 6 || {!FLOOR(sequence)} == 7)
+                {
+                     document.getElementById("setfilter{!FLOOR(sequence)}").innerHTML = "<select id='applyfilter{!FLOOR(sequence)}' class='ui-widget scustom ui-corner-all scolour' ><option value='0'>Filter By</option><option value='1'>Priority Low To High</option><option value='2'>Priority High To low</option></select>";
+                 }
+               $('#applyfilter{!FLOOR(sequence)}').on('change', function() {
+                    var sid = $(this).val();
+                    
+                    if(sid == 1)
+                     {
+                        
+                    	$('#setlink5').hide();        
+                        $('#setlink6').hide();     
+                        $('#setlink7').show();  
+                        $('#applyfilter7').val(1);
+                         
+                        
+                     }
+                     
+                    if(sid == 2)
+                     {
+                        
+                    	$('#setlink5').hide();
+                         $('#setlink7').hide();  
+                        $('#setlink6').show();     
+                        $('#applyfilter6').val(2);
+                     }
+                   if(sid == 0)
+                     {
+                        
+                    	$('#setlink5').show();
+                         $('#setlink7').hide();  
+                        $('#setlink6').hide();     
+                        $('#applyfilter5').val(0);
+                     }
+                    
+         		});
+                
+                
+                if({!FLOOR(sequence)} == 8 || {!FLOOR(sequence)} == 9 || {!FLOOR(sequence)} == 10)
+                {
+                     document.getElementById("setfilter{!FLOOR(sequence)}").innerHTML = "<select id='applyfilter{!FLOOR(sequence)}' class='ui-widget scustom ui-corner-all scolour' ><option value='8'>Filter By</option><option value='9'>Priority Low To High</option><option value='10'>Priority High To low</option></select>";
+                }
+               $('#applyfilter{!FLOOR(sequence)}').on('change', function() {
+                    var sid = $(this).val();
+                    
+                    if(sid == 9)
+                     {
+                        
+                    	$('#setlink8').hide();        
+                        $('#setlink10').hide();     
+                        $('#setlink9').show();  
+                        $('#applyfilter9').val(9);
+                         
+                        
+                     }
+                     
+                    if(sid == 10)
+                     {
+                    	$('#setlink8').hide();
+                         $('#setlink9').hide();  
+                        $('#setlink10').show();     
+                        $('#applyfilter10').val(10);
+                     }
+                   if(sid == 8)
+                     {
+                        
+                    	$('#setlink8').show();
+                         $('#setlink9').hide();  
+                        $('#setlink10').hide();     
+                        $('#applyfilter10').val(8);
+                     }
+                    
+         		});
+                
+                  });
+    function getpageRedirect(linkvar)
+    {
+        window.open(linkvar);
+	}
+    jQuery(document).keydown(function(event) {
+        // If Control or Command key is pressed and the S key is pressed
+        // run save function. 83 is the key code for S.
+        if((event.ctrlKey || event.metaKey) && event.which == 83) {
+            // Save Function
+            event.preventDefault();
+            saveTable{!FLOOR(sequence)}();
+            //sforce.connection.upsert(dataToUpdate,{onSuccess:alert, onFailure:alert});
+            return false;
+        }
+    }
+   );
+    function saveTable{!FLOOR(sequence)}() {
+        try{
+              sforce.connection.sessionId = "{!$Api.Session_ID}";
+              console.log('dataToUpdate-->>',dataToUpdate);
+              var dataToUpsert = new sforce.SObject("{!JSENCODE(objChartManager.Object_Name__c)}");  
+              dataToUpsert = dataToUpdate;
+              console.log('LeadToUpdate--',dataToUpsert);
+              var result = sforce.connection.upsert("Id",dataToUpsert);
+            console.log('result--',result);
+             
+              if( result[0].success === "true" ) { 
+            			$( "div.success" ).fadeIn( 300 ).delay( 1500 ).fadeOut( 400 ); 
+                  		dataToUpdate=[];
+                    } 
+              else { 
+                  $( "div.failure" ).fadeIn( 300 ).delay( 1500 ).fadeOut( 400 );
+                        console.log('Error occured: ',result[0].errors.message ); 
+                  	dataToUpdate=[];
+              }
+        }
+        catch(err)
+        {
+            $( "div.failure" ).fadeIn( 300 ).delay( 1500 ).fadeOut( 400 );
+            console.log('Error occured: ', err.message);
+            	dataToUpdate=[];
+        }
+    } 
+    </script>
+    <div class="alert-box success">Data Saved Successfully</div>
+    <div class="alert-box failure">Processing Failed</div>
+    <br />
+   
+     <div id="setlink{!FLOOR(sequence)}" style="margin-top:50px;margin-bottom:30px;float: left; width: {!width}; display: inline-block;">
+        <div style="display:inline-flex;float: left;margin: 20px 20px;">
+            <h1 style="margin:{!IF(title == 'Google Calendar','0px 20px','20px 20px')};font-size: 18px;"  >{!title} </h1>  
+        </div>
+        <div style="display:inline-flex;float: right;margin: 20px 20px;">
+            <apex:form >
+                <div style="display:flex;">
+                    <apex:commandButton id="btnCal" styleClass="newbtn"  value="Login to Google Account" action="{!ConnectCalendar}" style="display:{!IF(title == 'Google Calendar', 'block','none')}" />
+                    <apex:commandButton id="btnCal1" styleClass="newbtn"  value="Sync & Save Calender Events" action="{!doStoreListAllCalendar}" status="pageStatus"  reRender="GCalander" style="display:{!IF(title == 'Google Calendar', 'block','none')}"/>
+                    <apex:commandButton id="btnEvent" styleClass="newbtn" value="Refresh Sync" action="{!doFetchAccessToken}" status="pageStatus" reRender="GCalander" style="display:{!IF(title == 'Google Calendar', 'block','none')}"/>
+                </div>
+                <div style="display:flex;">
+                    <apex:commandButton id="btnCals" styleClass="newbtn"  value="Login to Outlook Account" action="{!ConnectOutlookCalendar}" style="display:{!IF(title == 'Outlook Calendar', 'block','none')}"/>
+                    <apex:commandButton styleClass="newbtn"  value="Sync & Save Calender Events" action="{!doStoreListOutlookAllCalendar}" style="display:{!IF(title == 'Outlook Calendar', 'block','none')}"/>
+                    <apex:commandButton styleClass="newbtn" value="Outlook Refresh Sync" action="{!doOutlookFetchAccessToken}" style="display:{!IF(title == 'Outlook Calendar', 'block','none')}"/>    
+                </div>
+                
+            </apex:form>
+            <div id="setfilter{!FLOOR(sequence)}">  
+                
+        </div>
+        </div>
+            
+        
+        
+        
+        <div style="margin:12px 23px 0px;" id="{!FLOOR(sequence)}" class="table-striped" >{!title} {!FLOOR(sequence)}</div>
+        <button id="btnSave{!FLOOR(sequence)}" style="display:{!savebtnflag}" onclick="saveTable{!FLOOR(sequence)}()" class="savebtn ui-button ui-widget ui-corner-all">Save</button> 
+    </div>
+       
+</apex:component>

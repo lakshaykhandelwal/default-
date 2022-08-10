@@ -1,0 +1,22 @@
+<aura:component controller="MightySE_HeatMapController" implements="force:appHostable,flexipage:availableForAllPageTypes" 
+                access="global" >
+    <!--   -->
+    
+    <ltng:require scripts="{!join(',',
+						   $Resource.CDN_Data + '/jquery-3.3.1.js',
+							$Resource.bootstrap + '/jquery.min.js',
+                           
+                           $Resource.Heatmap + '/highcharts.js',
+                           $Resource.Heatmap + '/map.js',
+                           $Resource.Heatmap + '/data.js',
+                           $Resource.Heatmap + '/exporting.js',
+                           $Resource.Heatmap + '/offline-exporting.js',
+                           $Resource.Heatmap + '/us-all.js')}"  afterScriptsLoaded="{!c.controllerFunction}"/>
+    
+     
+   <!-- <ltng:require scripts="{! $Resource.Heatmap + '/map.js'}"  afterScriptsLoaded="{!c.doInit}"/>-->
+    <div class="slds-card">
+        <div id="schart" width="950" height="250"></div>  
+    </div>
+    
+</aura:component>

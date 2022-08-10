@@ -1,0 +1,117 @@
+<apex:component controller="SE_Open_Activities_TableCtrl">
+        <apex:includeScript value="{!URLFOR($Resource.jqxall, 'jqx.js')}"/>
+
+    <link rel="stylesheet" href="https://www.jqwidgets.com/public/jqwidgets/styles/jqx.base.css" type="text/css" />
+        <link rel="stylesheet" href="https://www.jqwidgets.com/public/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+            <script>
+            var dataToUpdate = [];
+            $(document).ready(function ()
+                              {
+                                 
+                                  var source =
+                                      {
+                                          localdata: {!JSENCODE(data)},
+                                          datatype: "array",
+                                          datafields:
+                                          [
+                                              { name: 'Subject', type: 'string' },
+                                              { name: 'EndDateTime', type: 'date' },
+                                              { name: 'Owner.Name', type: 'string' },
+                                              { name: 'Id', type: 'string' },
+                                              { name: 'Who.Name', type: 'string' },
+                                              { name: 'Account.Name', type: 'string' },
+                                              { name: 'EventSubtype', type: 'string' }
+                                          ]
+                                      };
+                                  var dataAdapter = new $.jqx.dataAdapter(source);
+                                  $("#5").jqxGrid(
+                                      {
+                                          width: "100%",
+                                          source: dataAdapter,
+                                          columnsresize: true,
+                                          autoHeight: true,
+                                          editable: true,
+                                          columns: [
+                                              { text: 'Subject', datafield: 'Subject' },
+                                              { text: 'Due Date', datafield: 'EndDateTime' },
+                                              { text: 'Assigned To', datafield: 'Owner.Name', editable: false },
+                                              { text: 'Name', datafield: 'Who.Name', cellsalign: 'right', editable: false },
+                                              { text: 'Related To', datafield: 'Account.Name', cellsalign: 'right', editable: false },
+                                              { text: 'Priority', datafield: 'Id', cellsalign: 'right'},
+                                              { text: 'Status', datafield: 'EventSubtype', cellsalign: 'right' }
+                                          ]
+                                      });
+                                  $("#5").on('cellbeginedit', function (event) {
+                                      console.log('dataToUpdate',dataToUpdate);
+                                  });
+                                  $("#5").on('cellendedit', function (event) {  
+                                      console.log('Cell edited ',  event.args);
+                                      var i = -1; // Index
+                                      var flag = 0; // Flag to check if Record is new or old
+                                      var j = 0; // looping Variable
+                                      var args = event.args;
+                                      var ObjToUpdate = {}; // Object Container
+                                      console.log('ObjToUpdate--',ObjToUpdate);
+                                      debugger;
+                                      ObjToUpdate.Id = args.row.Id;  
+                                      console.log('args.rowindex',args.rowindex);
+                                      if(event.args.oldvalue != event.args.value) {
+                                          for(j=0;j<dataToUpdate.length;j++)
+                                          {
+                                              i++;
+                                              if (dataToUpdate[j].Id == ObjToUpdate.Id)
+                                              {
+                                                  ObjToUpdate = dataToUpdate[j];
+                                                  flag = 1;
+                                                  break;
+                                              }
+                                          }
+                                          if(flag==0)
+                                          {
+                                              dataToUpdate.push(ObjToUpdate);
+                                              i++;
+                                              console.log('--Args--',args);
+                                              console.log('dataToUpdate---',dataToUpdate);
+                                          } 
+                                          ObjToUpdate[args.datafield] =  args.value;
+                                          dataToUpdate[i]=ObjToUpdate;
+                                          console.log('dataToUpdate-->',dataToUpdate);
+                                          
+                                          
+                                      }
+                                  });
+                                  
+                              });
+    jQuery(document).keydown(function(event) {
+        // If Control or Command key is pressed and the S key is pressed
+        // run save function. 83 is the key code for S.
+        if((event.ctrlKey || event.metaKey) && event.which == 83) {
+            // Save Function
+            event.preventDefault();
+            saveTable5();
+            return false;
+        }
+    });
+    function saveTable5() {
+        console.log('dataToUpdate--',dataToUpdate);
+        $(".slds-spinner_container").show();
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.SE_Open_Activities_TableCtrl.saveTable}',
+            JSON.stringify(dataToUpdate),
+            function(result, event){
+                if (event.status) {
+                    console.log(result);
+                } else if (event.type === 'exception') {
+                    console.log('Exception Occured while saving the data. saveTable5()');
+                    document.getElementById("5").innerHTML += event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("5").innerHTML += event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    </script>
+    <div style="margin: 20px"><h2 style="font-size: 16px">My Open Activities</h2></div>
+    <div id="5"></div>
+</apex:component>

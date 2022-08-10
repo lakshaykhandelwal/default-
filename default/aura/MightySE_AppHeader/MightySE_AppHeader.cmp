@@ -1,0 +1,27 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <div class="slds-page-header" style="margin-top: -77px;
+                                         position: absolute;
+                                         width: 100%;">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
+                            <a class="navbar-brand" href="#"><img src="{!$Label.c.logo}" style="height: 30px; width: 30px;" class="img-responsive img-set"/></a>
+                            <span class="slds-assistive-text">Mighty SE</span>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <div class="bBody" data-aura-rendered-by="337:0">
+                                    <h2 class="truncate" data-aura-rendered-by="327:0" style="font-size: var(--lwc-fontSizeXLarge,1.25rem); font-weight: 100;">Mighty SE</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

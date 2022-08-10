@@ -1,0 +1,21 @@
+<aura:component controller="ConfigurableLightningDataTableCntrl" implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName">
+    <!-- Attributes -->
+    <aura:attribute name="title" type="String"/>
+    <aura:attribute name="config" type="Object"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    <!-- Main component Designing Starts from here -->
+    <div class="slds-m-around_medium">
+        <h1 class="slds-text-heading_large">{! v.title }</h1>
+    </div>
+    
+    <div style="height: 300px">
+        <lightning:datatable aura:id="ldTable" columns="{! v.columns }" data="{! v.data }" keyField="Id" errors="{! v.errors }" draftValues="{! v.draftValues }" onsave="{! c.handleSaveEdition }" />
+    </div>
+    <!-- Main component Designing Ends here -->
+</aura:component>

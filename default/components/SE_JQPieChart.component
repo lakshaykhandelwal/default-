@@ -1,0 +1,45 @@
+<apex:component controller="SE_JQPieChartController">
+    <apex:attribute name="chart_query" type="String" required="true" description="Query for Chart" assignTo="{!query}" />
+    <apex:attribute name="title" type="String" required="true" description="Title for Chart" />
+    <apex:attribute name="width" type="Integer" required="true" description="Width of Chart" />
+    <apex:attribute name="sequence" type="integer" required="true" description="Sequence of Chart" />
+    <apex:attribute name="showLegends" type="boolean" required="true" description="Show/Hide Legends" />
+    <apex:attribute name="unit" type="string" required="true" description="Unit of Chart to display data in" />
+    
+    <script type="text/javascript">
+       
+    $('#{!FLOOR(sequence)}').highcharts({
+        navigation: {
+            buttonOptions: {
+                theme: {
+                    style: {
+                        color: '#039',
+                        textDecoration: 'underline'
+                    }
+                }
+            }
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    enabled: false
+                },
+                printButton: {
+                    text: 'Print',
+                    onclick: function () {
+                        this.print();
+                    }
+                }
+            }
+        }
+    });
+   
+    $( function(){
+        var unit =  "{! IF(unit!=null,unit," ")}";
+        var title = "";
+       	var title = "{!title}";
+        loadpiecharts({!FLOOR(sequence)},{!data},title,{!showLegends},unit); 
+    });
+    </script>
+    <div id="pie{!FLOOR(sequence)}" style="height: 400px; width: {!width}%; display:block; margin: 20px auto; float:left; background:#ccc;">{!title}</div>
+</apex:component>

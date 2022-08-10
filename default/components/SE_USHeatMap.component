@@ -1,0 +1,26 @@
+<apex:component controller="SE_JQUSHeatMapController">
+    <apex:attribute name="chart_query" type="String" required="true" description="Query for Map" assignTo="{!query}" />
+    <apex:attribute name="title" type="String" required="true" description="Title for Map" />
+    <apex:attribute name="width" type="Integer" required="true" description="Width of Map" />
+    <apex:attribute name="sequence" type="string" required="true" description="Sequence of Map" />
+    <apex:attribute name="showLegends" type="boolean" required="true" description="Show/Hide Legends" />
+    <apex:attribute name="unit" type="string" required="true" description="Unit of Chart to display data in" />
+ 
+
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/data.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/mapdata/countries/us/us-all.js"></script>
+   
+
+    <div id="heatmap{!sequence}" style="height: 400px; width: {!width}%; display:block; margin: 20px auto; float:left; background:#ccc;">{!title}</div>
+        <script type="text/javascript">
+        
+        $( function(){
+             var title = "";
+         	var title= "{!title}";
+            loadHeatMapcharts({!sequence},{!data},title); 
+        });
+    </script>
+</apex:component>

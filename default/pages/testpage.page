@@ -1,0 +1,4 @@
+<apex:page >
+    {!URLFOR($Resource.CDN_Data, 'font-awesome.min.css')}<br/>
+    {!URLFOR($Resource.CDN_Data, 'jqx.arctic.css')}
+</apex:page>

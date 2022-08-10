@@ -1,0 +1,3 @@
+<apex:page standardController="Contact">
+    <!--<c:SE_USHeatMap ></c:SE_USHeatMap>-->
+</apex:page>

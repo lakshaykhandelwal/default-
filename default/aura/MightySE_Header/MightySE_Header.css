@@ -1,0 +1,119 @@
+.THIS .btn.newbtn {
+    background:#ff8956;
+    color: #454545;
+    font-size:
+        
+}
+.THIS .btn.newbtn:hover {
+    border: 1px solid #cccccc;
+    background: #ededed;
+    font-weight: normal;
+}
+.THIS .slds-card__body{
+    margin-top:0px !important;
+}
+.THIS .header{    
+    width:100%;         
+    height:120px;
+    background: #000000; 
+    background: -moz-linear-gradient(top, #000000 81%, #ff8956 81%, #ff8956 81%, #ff8956 81%, #ff8956 81%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #000000 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #000000 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ff8956',GradientType=0 ); /* IE6-9 */
+}
+.THIS .slds-form-element__label:empty {
+    margin: 0;
+    display: none !important;
+}
+/*.THIS .header div{
+    
+    display:inline-block;
+}
+.THIS .title div{
+    
+    display:inline-block;
+}*/
+.THIS .logo {            
+    width:10%;
+    font-size:15px;
+    text-align : center;
+}
+        
+.THIS .daterange .datepicker{
+    color:#000;
+}
+.THIS .img-set{
+    height:129px;
+}
+.THIS .header input[type="submit"]{
+    font-size:13px;
+    color:#fff;
+    background-color: #ff8956;
+}
+.THIS .header input[type="submit"]:hover{
+    font-size:13px;
+    color:#ff8956;
+    background-color:#fff ;
+}
+.THIS .title{
+    line-height: 65px;
+    border-bottom:2px solid #695f5f;
+}
+.THIS .margin-left{
+    margin-left:2%;
+}
+.THIS .margin-right{
+    margin-right:2%;
+}
+.THIS .orangefont{
+    font-size: 14px;
+    font-weight: 500;
+    margin: 5px;
+    color:#ff8956;
+}
+.THIS input#datefrom{
+    width:35%;
+    height: 31px;
+    border-radius: 3px;
+    border: unset;
+    padding: 2px;
+    padding-left: 8px;
+}
+.THIS input#dateto{
+    width:35%;
+    height: 31px;
+    border-radius: 3px;
+    border: unset;
+    padding: 2px;
+    padding-left: 8px;
+    
+}
+.THIS .scolour{
+    padding: 8px;
+    background-color:#ff8956;
+    color:white;
+    
+}
+.THIS .slds-card__header{
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.THIS .sicon{
+    position: relative;
+    right: 22px;
+    color: black;
+}
+.THIS .nav-item{
+    font-size: 14px;
+}       
+.THIS ul.nav.navbar-nav.navbar-right {
+    display: table;
+}
+.THIS ul.nav.navbar-nav.navbar-right {
+    margin-top: 12px;
+    margin-bottom: 2px;
+}
+.THIS .slds-text-heading_large {
+    font-size: 22px;
+    font-weight: bold;
+}

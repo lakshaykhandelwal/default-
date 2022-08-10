@@ -1,0 +1,4 @@
+<apex:page controller="DeployCustomSetting" >
+   <apex:form >
+       <apex:commandButton action="{!deployData}" value="Deploy"></apex:commandButton></apex:form>
+</apex:page>

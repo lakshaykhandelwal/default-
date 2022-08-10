@@ -1,0 +1,86 @@
+<aura:component controller="MightySE_Opportunity_tableController">
+    <!-- To Get picklist values-->  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="objInfoForPicklistValues" type="Opportunity" default="{sobjectType : 'Opportunity'}" description="object info to get picklist"/>
+    <aura:attribute name="ratingPicklistOpts" type="string[]" description="picklist options"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean"/>
+     <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedLookUpRecord1" type="sObject" default="{}"/>
+    <aura:attribute name="showErrorClass" type="boolean" default="false"/>
+    <aura:attribute name="index" type="string" />
+    <aura:attribute name="singleAccount" type="sobject" default="{'sobjectType' : 'Opportunity',
+                                                                 'Name' : '',
+                                                                 'Account.Name' : '',
+                                                                 'StageName': '',
+                                                                 'Amount': '',
+                                                                 'CloseDate' : '',
+                                                                 'Pricebook2.Name' : '',
+                                                                  'Owner.Name' : '',
+                                                                 'Type ' : ''
+                                                                
+                                                                 
+                                                                             }"/>
+    <aura:attribute name="nameEditMode" type="boolean" default="false" />
+    <aura:attribute name="nameEditMode2" type="boolean" default="false" />
+    <aura:attribute name="nameEditMode3" type="boolean" default="false" />
+    
+    <aura:attribute name="ratingEditMode" type="boolean" default="false" />
+    <aura:handler name="cmpEvent" event="c:ceEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="cmpEvent2" event="c:ceEvent2" action="{!c.handleComponentEvent2}"/>
+    <tr>
+        <td><div class="slds-truncate">{!v.index}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.Name}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.Account.Name}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.StageName}</div></td>
+        
+        <td ondblclick="{!c.EditName3}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.nameEditMode3 == false}">
+                    <span class="slds-truncate" title="Name">{!v.singleAccount.Amount}</span>
+                    <button onclick="{!c.EditName3}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        <ui:inputText class="slds-input"
+                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                      aura:id="AmountaccRating"
+                                      blur="{!c.hidedata}"
+                                      value="{!v.singleAccount.Amount}" />
+                        <button onclick="{!c.closeName3}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>   
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+        
+        <td ondblclick="{!c.EditName}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <aura:if isTrue="{!v.nameEditMode == false}">
+                    <span class="slds-truncate" title="Name">{!v.singleAccount.CloseDate}</span>
+                    <button onclick="{!c.EditName}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Name">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case--> 
+                    <aura:set attribute="else">
+                        
+                         <lightning:input type="date" onblur="{!c.hidedata}" value="{!v.singleAccount.CloseDate}"></lightning:input>
+                        <ui:inputText class="slds-input slds-hide"
+                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                      aura:id="stageaccRating"
+                                      
+                                      value="{!v.singleAccount.CloseDate}" />
+                        <button onclick="{!c.closeName}" class="slds-button slds-button_icon slds-cell-close__button slds-m-left_x-small" tabindex="0" title="close Name">
+                            <lightning:icon iconName="utility:close" size="xx-small" alternativeText="close"/>
+                        </button>   
+                    </aura:set> 
+                </aura:if>
+            </span>
+        </td>
+        
+        <td><div class="slds-truncate">{!v.singleAccount.Pricebook2.Name}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.Owner.Name}</div></td>
+        <td><div class="slds-truncate">{!v.singleAccount.Type}</div></td>
+    </tr>
+</aura:component>

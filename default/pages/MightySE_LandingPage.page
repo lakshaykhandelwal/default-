@@ -1,0 +1,268 @@
+<apex:page controller="MightySE_LandingController">
+    <head>
+        <apex:includeScript value="{!URLFOR($Resource.CDN_Data, 'jquery-3.3.1.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.bootstrap, 'jquery.min.js')}"/>
+        
+        <script src="http://github.highcharts.com/highstock.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+        
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'highcharts-3d.js')}"/>
+        
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'data.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'exporting.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'offline-exporting.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'us-all.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.Mightyscript, 'no-data-to-display.js')}"/>
+        
+        <apex:includeScript value="/soap/ajax/42.0/connection.js" />
+        <apex:includeScript value="/soap/ajax/42.0/apex.js"/>     
+        <link rel="stylesheet" href="{!URLFOR($Resource.Mighty_S_E__fontawesome, 'font-awesome.min.css')}" type="text/css"/>        
+        <link rel="stylesheet" href="{!URLFOR($Resource.bootstrap, 'bootstrap.min.css')}" type="text/css" />  
+        <apex:includeScript value="{!URLFOR($Resource.bootstrap, 'bootstrap.min.js')}"/>
+        
+        <link rel="stylesheet" href="{!URLFOR($Resource.JSGrid, 'editablegrid.css')}" type="text/css" media="screen" />                      
+        <link rel="stylesheet" href="{!URLFOR($Resource.CDN_Data, 'jquery-ui.css')}" type="text/css" />
+        <apex:includeScript value="{!URLFOR($Resource.CDN_Data, 'jqx-all.js')}"/>
+        
+   		<link rel="stylesheet" href="{!URLFOR($Resource.JQXBase, 'jqx.base.css')}" type="text/css" />
+     	<link rel="stylesheet" href="{!URLFOR($Resource.CDN_Data, 'jqx.arctic.css')}" type="text/css" />
+        <apex:includeScript value="{!URLFOR($Resource.c_script, 'c_script.js')}"/>
+        <style>
+            .header{
+            	<!--margin:0 auto;
+				line-height: 65px;-->
+            	color:#fff;
+                <!--display:inline-block;-->
+            	width:100%;        	
+            	height:120px;
+            	background: #000000; /* Old browsers */
+            	background: -moz-linear-gradient(top, #000000 81%, #ff8956 81%, #ff8956 81%, #ff8956 81%, #ff8956 81%); /* FF3.6-15 */
+            	background: -webkit-linear-gradient(top, #000000 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%); /* Chrome10-25,Safari5.1-6 */
+            	background: linear-gradient(to bottom, #000000 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%,#ff8956 81%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ff8956',GradientType=0 ); /* IE6-9 */
+            }
+            .header div,.title div{
+                color: white;
+            display:inline-block;
+            }
+            .logo {            
+            width:10%;
+            font-size:15px;
+            text-align : center;
+            }
+            
+            .daterange .datepicker{
+            color:#000;
+            }
+            .header input[type="submit"]{
+            font-size:13px;
+            color:#fff;
+            background-color: #ff8956;
+            }
+            .header input[type="submit"]:hover{
+            font-size:13px;
+            color:#ff8956;
+            background-color:#fff ;
+            }
+            .title{
+            line-height: 65px;
+            border-bottom:2px solid #695f5f26;
+            }
+            .margin-left{
+            margin-left:2%;
+            }
+            .margin-right{
+            margin-right:2%;
+            }
+            .orangefont{
+            font-size: 14px;
+            font-weight: 500;
+            color:#ff8956;
+            }
+            input#datefrom{
+            width:35%;
+            height: 31px;
+            border-radius: 3px;
+            border: unset;
+            padding: 2px;
+            padding-left: 8px;
+            
+            }
+            input#dateto{
+            width:35%;
+            height: 31px;
+            border-radius: 3px;
+            border: unset;
+            padding: 2px;
+            padding-left: 8px;
+            
+            }
+            .scolour{
+            background-color:#ff8956;
+            color:white;
+            
+            }
+            .sicon{
+            position: relative;
+            right: 22px;
+            color: black;
+            }
+            .nav-item{
+            font-size: 14px;
+            }
+            
+            ul.nav.navbar-nav.navbar-right {
+            display: table;
+            }
+            .img-set{
+                height:129px;
+                }
+            ul.nav.navbar-nav.navbar-right {
+            margin-top: 12px;
+            margin-bottom: 2px;
+            }
+            .slds-text-heading_large {
+            font-size: 22px;
+            font-weight: bold;
+            }
+            
+            
+            
+            @media (min-width: 1281px) {
+            
+            .daterange{        	
+            width:38%;
+            }
+            
+            }
+            @media (min-width: 768px) and (max-width: 1024px) {
+            
+            
+            
+            .daterange {
+            width: 45%;
+            }
+            .nav-item {
+            font-size: 11px;
+            }
+            .header input[type="submit"]{
+            font-size:11px;
+            }
+            input#datefrom 
+            {
+            height:27px;
+            }
+            input#dateto
+            {
+            height:27px;
+            }
+            .sicon{
+            font-size: 13px;
+            }
+            
+            }
+            @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            
+            .daterange {
+            width: 43%;
+            }
+            
+            }
+            @media (min-width: 481px) and (max-width: 767px) {
+            
+            .daterange {
+            width: 43%;
+            }
+            
+            }
+            @media screen and (max-width: 1225px) and (min-width: 1020px) {
+                .customCSS{
+                    height: 47px;
+                    line-height: 33px;
+                }
+            }
+            
+        </style>
+        <script type="text/javascript">
+        sforce.connection.sessionId = "{!$Api.Session_ID}";
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            
+            return [year, month, day].join('-');
+        }
+        $( function(){
+            $( ".datepicker" ).datepicker();
+            $( ".ui-button" ).button();
+            $( "#btngo" ).click( function( event ) {
+                fromdate  = [formatDate($("#datefrom").val()),'T00:00:00Z'].join('');
+                todate  = [formatDate($("#dateto").val()),'T00:00:00Z'].join('');
+            });
+            
+        });
+        </script>
+    </head>
+    <body>
+        <section id="Meheader">
+            <div class="container-fluid px-0">
+             
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark header">
+                    <a class="navbar-brand" href="#"><img src="{!$Label.logo}"  class="img-responsive img-set" /> </a>
+                    <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+					</button>-->
+                    <div class="daterange ">
+                        <input type="text" id="datefrom" class="datepicker" placeholder="Date Range"/><i class="fa fa-calendar sicon" aria-hidden="true"></i>to 
+                        <input type="text" id="dateto" class="datepicker" placeholder="Date Range"/><i class="fa fa-calendar sicon" aria-hidden="true"></i>
+                        <input id="btngo" class="ui-button ui-widget ui-corner-all" type="submit" value="Go" />
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbarText">
+                        
+                        
+                        <ul class="navbar-nav ">
+                            <li class="nav-item active">
+                                <a href="#setlink5" class="ui-button ui-widget ui-corner-all scolour">My Open Activites</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#setlink8" class="ui-button ui-widget ui-corner-all scolour">My Open Opportunites</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#setlink9" class="ui-button ui-widget ui-corner-all scolour customCSS">Demos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#setlink10" class="ui-button ui-widget ui-corner-all scolour">Leader Boards</a>
+                            </li>
+                        </ul>
+                        
+                    </div>
+                </nav>
+            </div>
+        </section>
+        <div class="title margin-left margin-right">
+            <div class="slds-text-heading_large">
+                Mighty SE -
+            </div>
+            <div class="slds-text-heading_small orangefont">
+                &nbsp;SL Landing Tab
+            </div>
+        </div>
+        <div class="container-fluid">
+            <apex:repeat value="{!queries}" var="query" id="DataRepeat">
+                <apex:variable value="where CreatedById = '{!$User.Id}' AND" var="chk"/>
+                <apex:variable value="AND {!query.Compare_Fields_with_Loggedin_User__c} = '{!$User.Id}'" var="FieldChkUser"/>
+                <c:SE_JQPieChart sequence="{!FLOOR(query.Sequence__c)}" unit="{!query.Unit__c}" width="{!query.Width__c}" chart_query="Select {!query.Fields__c} from {!query.Object_Name__c} {!IF(query.Created_by_Current_User__c,chk ,'where ')} {!query.Where_Condition__c} {! If(query.Compare_Fields_with_Loggedin_User__c!='-', FieldChkUser,'') }  {!query.GroupByOrderByLimit__c}" title="{!query.Name}" showLegends="{!query.Show_Legends__c}" rendered="{!If(query.Chart_Type__c == 'Pie',true,false)}" ></c:SE_JQPieChart>
+                <c:SE_JQBarChartVertical sequence="{!FLOOR(query.Sequence__c)}" unit="{!query.Unit__c}" width="{!query.Width__c}" chart_query="Select {!query.Fields__c} from {!query.Object_Name__c} {!IF(query.Created_by_Current_User__c,chk ,'where ')} {!query.Where_Condition__c} {! If(query.Compare_Fields_with_Loggedin_User__c!='-', FieldChkUser,'') }  {!query.GroupByOrderByLimit__c}" title="{!query.Name}" showLegends="{!query.Show_Legends__c}" rendered="{!If(query.Chart_Type__c == 'Vertical Bar',true,false)}" ></c:SE_JQBarChartVertical>
+                <c:SE_USHeatMap sequence="{!FLOOR(query.Sequence__c)}" unit="{!query.Unit__c}" width="{!query.Width__c}" chart_query="Select {!query.Fields__c} from {!query.Object_Name__c} {!IF(query.Created_by_Current_User__c,chk ,'where ')} {!query.Where_Condition__c} {! If(query.Compare_Fields_with_Loggedin_User__c!='-', FieldChkUser,'') }  {!query.GroupByOrderByLimit__c}" title="{!query.Name}" showLegends="{!query.Show_Legends__c}" rendered="{!If(query.Chart_Type__c == 'Heat Map',true,false)}" ></c:SE_USHeatMap>
+                <c:SE_JQTable sequence="{!FLOOR(query.Sequence__c)}" ChartManagerObj="{!query}" title="{!query.Name}" rendered="{!If(query.Chart_Type__c == 'Table',true,false)}"></c:SE_JQTable>
+                <c:SE_JQStackedBarChart sequence="{!FLOOR(query.Sequence__c)}" unit="{!query.Unit__c}" width="{!query.Width__c}" chart_query="Select {!query.Fields__c} from {!query.Object_Name__c} {!IF(query.Created_by_Current_User__c,chk ,'where ')} {!query.Where_Condition__c} {! If(query.Compare_Fields_with_Loggedin_User__c!='-', FieldChkUser,'') }  {!query.GroupByOrderByLimit__c}" title="{!query.Name}" showLegends="{!query.Show_Legends__c}" rendered="{!If(query.Chart_Type__c == 'Stacked Bar',true,false)}" ></c:SE_JQStackedBarChart>
+            </apex:repeat>
+        </div> 
+        
+    </body>
+</apex:page>

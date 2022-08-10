@@ -1,0 +1,86 @@
+<apex:page controller="SE_JQUSHeatMapController" action="{!fetchValue}">
+    
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/data.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/mapdata/countries/us/us-all.js"></script>
+    
+    <div id="container" style="height: 400px"></div>
+    
+    <script>
+        var lstData = [];
+    //var responseData = '{!HTMLENCODE(data)}';
+    // var stringified = JSON.stringify(responseData);
+    	var title = 'National Map of Deal Locations';
+    // var lstData = JSON.parse(stringified);
+       lstData = JSON.parse('{!HTMLENCODE(data)}');
+        console.log('lstData',lstData);
+        var mapdata =[];
+        var i=0;
+        for (i = 0; i < lstData.length; i++) {
+            if(lstData[i]!=undefined && lstData[i].Name != undefined && lstData[i].Hours != undefined){
+                mapdata.push({"code":lstData[i].Name.toUpperCase(), "value":Math.round(parseFloat(lstData[i].Hours))});
+            }
+        }
+    console.log('Map--->',mapdata);
+    // Instantiate the map
+    Highcharts.mapChart('container', {
+        chart: {
+            map: 'countries/us/us-all',
+            borderWidth: 1
+        },
+        title: {
+            text: title
+        },
+        exporting: {
+            sourceWidth: 600,
+            sourceHeight: 500
+        },
+        
+        legend: {
+            layout: 'horizontal',
+            borderWidth: 0,
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            floating: true,
+            verticalAlign: 'top',
+            y: 25
+        },
+        
+        mapNavigation: {
+            enabled: true
+        },
+        
+        colorAxis: {
+            min: 1,
+            type: 'logarithmic',
+            minColor: '#EEEEFF',
+            maxColor: '#000022',
+            stops: [
+                [0, '#EFEFFF'],
+                [0.67, '#4444FF'],
+                [1, '#000022']
+            ]
+        },
+        
+        series: [{
+            animation: {
+                duration: 1000
+            },
+            data: mapdata,
+            joinBy: ['postal-code', 'code'],
+            dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                format: '{point.code}'
+            },
+            name: 'Opportunity density',
+            tooltip: {
+                pointFormat: '{point.code}: {point.value}'
+            }
+        }]
+    });
+
+        </script>
+
+</apex:page>

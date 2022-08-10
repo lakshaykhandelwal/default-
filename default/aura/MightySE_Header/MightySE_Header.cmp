@@ -1,0 +1,71 @@
+<aura:component  implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    
+    <aura:registerEvent name="SampleApplicationEvent" type="c:MightySE_FilterDateEvents"/>
+    
+    <aura:attribute name="startDate" type="string"/>
+    <aura:attribute name="endDate" type="string"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card >
+        <section id="Meheader">
+            <div class="slds-clearfix">
+                <div class="container-fluid px-0">
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark header">
+                        <a class="navbar-brand" href="#"><img src="{!$Label.c.logo}"  class="img-responsive img-set"/></a>
+                        
+                        <div class="slds-float_right" style="margin: 35px;">
+                            <div class="slds-page-header__col-actions">
+                                <div class="slds-page-header__controls">
+                                    <div class="slds-page-header__control">
+                                        <ul class="slds-button-group-list">
+                                            <li style="margin-right: 5px;">
+                                                <div class="slds-col">
+                                                    <lightning:input aura:id="startDate"  type="date" label="" placeholder="Select Start Date" value="{!v.startDate}"/>
+                                                </div>
+                                            </li>
+                                            <li style="margin-right: 35px;">
+                                                <div class="slds-col">    
+                                                    <lightning:input aura:id="endDate" type="date" label="" placeholder="Select End Date" value="{!v.endDate}"/> &nbsp;
+                                                </div>
+                                            </li>
+                                            <li style="margin-right: 35px;">
+                                                <lightning:button label="Apply" variant="brand" onclick="{!c.applyFilter}"/>
+                                            </li>
+                                            <li>
+                                                <a href="#setlink5"  class="ui-button ui-widget ui-corner-all scolour">My Open Activites</a>
+                                            </li>
+                                            <li>
+                                                <a href="#setlink8" class="ui-button ui-widget ui-corner-all scolour">My Open Opportunites</a>
+                                            </li>
+                                            <li>
+                                                <a href="#setlink15" class="ui-button ui-widget ui-corner-all scolour customCSS">Demos</a>
+                                            </li>
+                                            <li>
+                                                <a href="#setlink15" class="ui-button ui-widget ui-corner-all scolour">Leader Boards</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </section>
+        <div class="title margin-left margin-right" style="display: inline-flex;
+                                                           width: 96%;">
+            <div class="slds-text-heading_large">
+                Welcome to Mighty SE  
+            </div>
+            <div class="slds-text-heading_small orangefont">
+                &nbsp;Sales Engineer View
+            </div>
+            <!--<div style="float: right;margin-top: 22px;">
+       <apex:commandButton id="btnCal" styleClass="newbtn"  value="Login to Google Account" action="{!ConnectCalendar}"/>
+                <apex:commandButton id="btnCal1" styleClass="newbtn"  value="Sync & Save Calender Events" action="{!doStoreListAllCalendar}" status="pageStatus"  reRender="GCalander"/>
+                <apex:commandButton id="btnEvent" styleClass="newbtn" value="Refresh Sync" action="{!doFetchAccessToken}" status="pageStatus" reRender="GCalander"/>
+            </div>-->
+        </div>
+    </lightning:card>
+</aura:component>

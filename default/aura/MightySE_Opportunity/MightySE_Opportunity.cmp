@@ -1,0 +1,110 @@
+<aura:component  implements="force:appHostable,flexipage:availableForAllPageTypes" 
+                access="global" 
+                controller="MightySE_Opportunity_tableController">
+	
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getOpportunityDataJS}"/>
+    
+    <aura:handler event="c:MightySE_FilterDateEvents" action="{!c.filterDates}"/>
+    
+    <aura:attribute name="getAllOpportunityList" type="Opportunity[]" description="store Opportunity records list"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean" description="show hide save and cancel" default="false"/>
+    <aura:attribute name="allData" type="List"/>
+      <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    
+    
+    
+    <lightning:card title="My Open Opportunity">
+        
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem padding="around-small" size="12" >
+                <div class="slds-m-around_large" style="z-index:79;position:relative"  id="setlink8">
+                    <table class="slds-table slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols">
+                        <thead style="z-index:1">
+                            <tr class="slds-text-heading_label">
+                                <th scope="col" style="width:5%">
+                                    <div class="slds-truncate" title="index">#</div>
+                                </th>
+                                <th scope="col" style="width:15%">
+                                    <div class="slds-truncate" title="Opportunity Name">Opportunity Name</div>
+                                </th>
+                                <th scope="col" style="width:15%">
+                                    <div class="slds-truncate" title="ACCOUNT">Account</div>
+                                </th>
+                                <th scope="col" style="width:10%">
+                                    <div class="slds-truncate" title="STAGE">Stage</div>
+                                </th>
+                                <th scope="col" style="width:15%" >
+                                    <div class="slds-truncate" title="AMOUNT">Amount</div>
+                                </th>
+                                <th scope="col" style="width:10%" >
+                                    <div class="slds-truncate" title="CLOSE DATE">Close Date</div>
+                                </th>
+                                <th scope="col" style="width:10%" >
+                                    <div class="slds-truncate" title="PRODUCT">Product</div>
+                                </th>                       
+                                <th scope="col" style="width:10%" >
+                                    <div class="slds-truncate" title="OWNER">Owner</div>
+                                </th>                       
+                                <th scope="col" style="width:10%" >
+                                    <div class="slds-truncate" title="TYPE">Type</div>
+                                </th>                       
+                            </tr>
+                        </thead>
+                        <tbody>
+                          
+                            <aura:iteration items="{!v.getAllOpportunityList}" var="tskdata" indexVar="index">
+                                <!-- Child Component -->
+                                
+                                <c:ChildInlineEditOpportunity singleAccount="{!tskdata}"
+                                                   showSaveCancelBtn="{!v.showSaveCancelBtn}"
+                                                   index="{!index + 1}" />
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    <aura:if isTrue="{!v.showSaveCancelBtn}">
+                        <lightning:buttonGroup class="slds-m-around_medium">
+                            <lightning:button label="Save" onclick="{!c.SaveAccount}" />
+                        </lightning:buttonGroup>
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+            <div style="z-index:20;position:relative">
+                <lightning:layoutItem padding="around-small" flexibility="auto">
+                    <lightning:button label="First" iconName="utility:left" iconPosition="left"
+                                      onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/>
+                    <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                      onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="1" 
+                           class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                    </span>
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    
+                    <aura:iteration items="{!v.pageList}" var="item">
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="{!item}"
+                               class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}</a>
+                        </span>
+                    </aura:iteration>
+                    
+                    <span class="slds-p-horizontal_xxx-small">
+                        <a>...</a>
+                    </span>
+                    <span class="slds-p-horizontal_x-small">
+                        <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                           class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}">{!v.totalPages}</a>
+                    </span>
+                    <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                    <lightning:button label="Last" iconName="utility:right" iconPosition="right" 
+                                      disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}" />
+                </lightning:layoutItem>
+            </div>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

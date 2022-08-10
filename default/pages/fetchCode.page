@@ -1,0 +1,18 @@
+<apex:page controller="fetchCodeController">
+    <script>
+        window.onload = function () {
+            var authcode = '{!authCode}';
+            var base_URL = '{!baseUrl}';
+
+            if (authcode != '') {
+                var qstring = base_URL + '/lightning/n/Mighty_S_E__Mighty_SE1?c__code=' + authcode + '&status=true;
+                console.log('qstring' + qstring);
+                location.replace(qstring);
+            } else {
+                location.replace(base_URL + '/lightning/n/Mighty_S_E__Mighty_SE1');
+            }
+
+        };
+
+    </script>
+</apex:page>

@@ -1,0 +1,18 @@
+<apex:component controller="SE_JQStackedBarChartController" >
+    <apex:attribute name="chart_query" type="String" required="true" description="Query for Chart" assignTo="{!query}" />
+    <apex:attribute name="title" type="String" required="true" description="Title for Chart" />
+    <apex:attribute name="width" type="Integer" required="true" description="Width of Chart" />
+    <apex:attribute name="sequence" type="string" required="true" description="Sequence of Chart" />
+    <apex:attribute name="showLegends" type="boolean" required="true" description="Show/Hide Legends" />
+    <apex:attribute name="unit" type="string" required="true" description="Unit of Chart to display data in" />
+    <script type="text/javascript">
+  
+        $( function(){
+            stackedbarchart({!sequence},{!data});
+        });
+    </script>
+    <div id="stacked{!sequence}" style="height: 400px; width: {!width}%; display:block; margin: 20px auto; float:left; background:#ccc;">{!title}</div>
+    
+    
+    
+</apex:component>

@@ -1,0 +1,4 @@
+<!--c:ceEvent-->
+<aura:event type="COMPONENT">
+    <aura:attribute name="OwnerId" type="String"/>
+</aura:event>
